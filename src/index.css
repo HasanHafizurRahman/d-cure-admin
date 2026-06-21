@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=IBM+Plex+Sans+Bangla:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green: #004d2e;
+  --color-brand-green-light: #e6f4ea;
+  --color-brand-red: #d32f2f;
+  --color-accent-gold: #d4af37;
+  --color-primary-dark: #1e293b;
+  --color-surface-bg: #f8fafc;
+  
+  --font-sans: 'Inter', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', 'IBM Plex Sans Bangla', 'Hind Siliguri', sans-serif;
+}
+
+body {
+  background-color: var(--color-surface-bg);
+  color: var(--color-primary-dark);
+  font-family: var(--font-sans);
+}
+
+.bangla-text {
+  font-family: 'Hind Siliguri', 'IBM Plex Sans Bangla', sans-serif;
+  line-height: 1.6;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar utilities */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
