@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { 
-  ShieldCheck, 
-  MapPin, 
-  Save, 
+import {
+  ShieldCheck,
+  MapPin,
+  Save,
   Loader2,
   AlertCircle
 } from 'lucide-react';
@@ -80,7 +80,7 @@ export default function Settings() {
         <div className="space-y-1">
           <p className="font-display font-bold">তাত্ক্ষণিক প্রভাব নোটিশ</p>
           <p className="font-sans text-[11px] leading-relaxed text-slate-600">
-            এখানে আপনার করা যেকোনো পরিবর্তন কাস্টমার সাইডের চেকআউট ক্যালকুলেটর ও হোয়াটসঅ্যাপ কনফার্মেশন লিংকে সরাসরি প্রভাব ফেলবে।
+            এখানে আপনার করা যেকোনো পরিবর্তন কাস্টমার সাইডের চেকআউট ক্যালকুলেটরে সরাসরি প্রভাব ফেলবে।
           </p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function Settings() {
       <div className="glass-panel rounded-2xl border border-slate-150/80 overflow-hidden bg-white">
         <div className="bg-slate-50/50 p-4 border-b border-slate-100 flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-brand-green" />
-          <h3 className="font-display font-bold text-sm text-slate-800">ডেলিভারি চার্জ ও কন্টাক্ট নম্বর</h3>
+          <h3 className="font-display font-bold text-sm text-slate-800">ডেলিভারি চার্জ</h3>
         </div>
 
         <form onSubmit={handleSave} className="p-6 space-y-5 text-left font-sans text-xs">
