@@ -12,6 +12,17 @@
   
   --font-sans: 'Inter', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
   --font-display: 'Outfit', 'IBM Plex Sans Bangla', 'Hind Siliguri', sans-serif;
+
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
 }
 
 body {

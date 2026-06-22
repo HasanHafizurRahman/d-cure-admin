@@ -1,4 +1,43 @@
-import type { PackageOption, OrderDetails, DeliverySettings } from '../types';
+import type { PackageOption, OrderDetails, DeliverySettings, LoginResponse } from '../types';
+
+// API Configuration
+const API_BASE_URL = import.meta.env.DEV 
+  ? '' 
+  : (import.meta.env.VITE_API_BASE_URL || 'http://118.179.144.13:8005');
+
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('dcure_admin_token');
+  return {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+};
+
+const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  const headers = getAuthHeaders();
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...headers,
+      ...options.headers,
+    },
+  });
+
+  if (response.status === 401) {
+    localStorage.removeItem('dcure_admin_token');
+    localStorage.removeItem('dcure_admin_user');
+    localStorage.removeItem('dcure_admin_menus');
+    
+    window.dispatchEvent(new Event('dcure_unauthorized'));
+    
+    if (!window.location.pathname.includes('/login')) {
+      window.location.href = '/login';
+    }
+  }
+
+  return response;
+};
 
 // Constants
 const LOCAL_STORAGE_KEYS = {
@@ -136,11 +175,41 @@ const setStorageItem = <T>(key: string, value: T): void => {
 const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const api = {
+  // --- AUTH ENDPOINTS ---
+  login: async (email: string, password: string): Promise<LoginResponse> => {
+    const response = await fetch(`${API_BASE_URL}/api/login`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Login failed');
+    }
+    return data;
+  },
+
+  logout: async (): Promise<{ success: boolean; message: string }> => {
+    const response = await fetchWithAuth(`${API_BASE_URL}/api/logout`, {
+      method: 'POST',
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Logout failed');
+    }
+    return data;
+  },
+
   // --- PACKAGES ENDPOINTS ---
   getPackages: async (): Promise<PackageOption[]> => {
     await delay();
     try {
-      const response = await fetch('/api/packages');
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages`);
       if (response.ok) return await response.json();
     } catch {
       // Failover to local storage
@@ -155,7 +224,7 @@ export const api = {
       id: `pkg-${Date.now()}`,
     };
     try {
-      const response = await fetch('/api/packages', {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPkg),
@@ -173,7 +242,7 @@ export const api = {
   updatePackage: async (id: string, updatedPkg: Partial<PackageOption>): Promise<PackageOption> => {
     await delay();
     try {
-      const response = await fetch(`/api/packages/${id}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedPkg),
@@ -193,7 +262,7 @@ export const api = {
   deletePackage: async (id: string): Promise<boolean> => {
     await delay();
     try {
-      const response = await fetch(`/api/packages/${id}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) return true;
@@ -216,7 +285,7 @@ export const api = {
       if (filters?.search) params.append('search', filters.search);
       if (params.toString()) url += `?${params.toString()}`;
 
-      const response = await fetch(url);
+      const response = await fetchWithAuth(`${API_BASE_URL}${url}`);
       if (response.ok) return await response.json();
     } catch {
       // Failover to local storage
@@ -249,7 +318,7 @@ export const api = {
       id: `DC-${Math.floor(100000 + Math.random() * 900000)}`,
     };
     try {
-      const response = await fetch('/api/orders', {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newOrder),
@@ -270,7 +339,7 @@ export const api = {
   ): Promise<OrderDetails> => {
     await delay();
     try {
-      const response = await fetch(`/api/orders/${id}/status`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/orders/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -290,7 +359,7 @@ export const api = {
   deleteOrder: async (id: string): Promise<boolean> => {
     await delay();
     try {
-      const response = await fetch(`/api/orders/${id}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/orders/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) return true;
@@ -307,7 +376,7 @@ export const api = {
   getSettings: async (): Promise<DeliverySettings> => {
     await delay();
     try {
-      const response = await fetch('/api/settings');
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/settings`);
       if (response.ok) return await response.json();
     } catch {
       // Failover to local storage
@@ -318,7 +387,7 @@ export const api = {
   updateSettings: async (settings: Partial<DeliverySettings>): Promise<DeliverySettings> => {
     await delay();
     try {
-      const response = await fetch('/api/settings', {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),

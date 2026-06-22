@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Menu, Bell, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
   onMenuToggle: () => void;
 }
 
 export default function Header({ onMenuToggle }: HeaderProps) {
+  const { user } = useAuth();
   const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -159,15 +161,19 @@ export default function Header({ onMenuToggle }: HeaderProps) {
 
         {/* Profile Details */}
         <div className="flex items-center gap-2.5 border-l border-slate-100 pl-4">
-          <div className="h-9 w-9 overflow-hidden rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-display font-semibold text-sm">
-            A
+          <div className="h-9 w-9 overflow-hidden rounded-xl bg-brand-green/10 border border-brand-green/20 flex items-center justify-center text-brand-green font-display font-semibold text-sm">
+            {user?.name 
+              ? user.name.trim().split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() 
+              : 'A'}
           </div>
           <div className="hidden lg:block text-left">
             <p className="font-display text-xs font-bold text-slate-800 leading-tight">
-              Admin User
+              {user?.name || 'Admin User'}
             </p>
-            <p className="font-sans text-[10px] text-slate-450">
-              Super Admin
+            <p className="font-sans text-[10px] text-slate-400 capitalize">
+              {user?.status 
+                ? user.status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') 
+                : 'Super Admin'}
             </p>
           </div>
         </div>

@@ -5,8 +5,10 @@ import {
   Tag, 
   Settings as SettingsIcon, 
   X, 
-  ShieldCheck 
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,12 +16,22 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const menuItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Orders', path: '/orders', icon: ShoppingCart },
-    { name: 'Products / Pricing', path: '/products', icon: Tag },
-    { name: 'Settings', path: '/settings', icon: SettingsIcon },
+  const { user, menus, logout } = useAuth();
+
+  const allMenuItems = [
+    { name: 'Dashboard', path: '/', icon: LayoutDashboard, slug: 'dashboard' },
+    { name: 'Orders', path: '/orders', icon: ShoppingCart, slug: 'orders' },
+    { name: 'Products / Pricing', path: '/products', icon: Tag, slug: 'products' },
+    { name: 'Settings', path: '/settings', icon: SettingsIcon, slug: 'settings' },
   ];
+
+  // Filter menu items if API menus exist and are active
+  const menuItems = menus && menus.length > 0
+    ? allMenuItems.filter(item => 
+        menus.some(m => m.slug?.toLowerCase() === item.slug && m.is_active)
+      )
+    : allMenuItems;
+
 
   return (
     <>
@@ -93,22 +105,30 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
-
         {/* Sidebar Footer Details */}
-        <div className="mt-auto border-t border-slate-100 pt-4">
-          <div className="flex items-center gap-3 px-2">
-            <div className="h-9 w-9 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green font-bold font-display text-sm">
-              AD
+        <div className="mt-auto border-t border-slate-100 pt-4 flex items-center justify-between px-2">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-brand-green/10 flex items-center justify-center text-brand-green font-bold font-display text-sm shrink-0">
+              {user?.name 
+                ? user.name.trim().split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() 
+                : 'AD'}
             </div>
-            <div>
-              <p className="font-display font-semibold text-xs text-slate-800">
-                Administrator
+            <div className="min-w-0">
+              <p className="font-display font-semibold text-xs text-slate-800 leading-tight truncate max-w-[120px]" title={user?.name || 'Administrator'}>
+                {user?.name || 'Administrator'}
               </p>
-              <p className="font-sans text-[10px] text-slate-400">
-                admin@dcureplus.com
+              <p className="font-sans text-[10px] text-slate-400 truncate max-w-[120px]" title={user?.email || 'admin@dcureplus.com'}>
+                {user?.email || 'admin@dcureplus.com'}
               </p>
             </div>
           </div>
+          <button
+            onClick={logout}
+            className="rounded-lg p-2 text-slate-400 hover:bg-slate-50 hover:text-brand-red transition-colors cursor-pointer shrink-0"
+            title="Sign Out"
+          >
+            <LogOut className="h-4.5 w-4.5" />
+          </button>
         </div>
       </aside>
     </>

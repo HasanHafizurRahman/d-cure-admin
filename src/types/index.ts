@@ -32,3 +32,35 @@ export interface DeliverySettings {
   insideDhakaCharge: number;  // Default: 60
   outsideDhakaCharge: number; // Default: 130
 }
+
+// User details returned from the login API
+export interface User {
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  status: string;
+  is_active: boolean;
+  encrypted_id: string;
+}
+
+// Menu items returned from the login API
+export interface MenuItem {
+  parent_id: number;
+  name: string;
+  slug: string;
+  icon: string;
+  order: number;
+  is_active: boolean;
+  encrypted_id: string;
+}
+
+// Login API response structure
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  access_token: string;
+  token_type: string;
+  user: User;
+  menus: MenuItem[];
+}
+
