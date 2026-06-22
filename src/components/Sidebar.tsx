@@ -5,10 +5,10 @@ import {
   Tag, 
   Settings as SettingsIcon, 
   X, 
-  ShieldCheck,
   LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logoImg from '../assets/cedra.png';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -51,15 +51,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Sidebar Header / Brand Logo */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-green text-accent-gold shadow-md">
-              <ShieldCheck className="h-6 w-6 stroke-[2]" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-auto flex items-center shrink-0">
+              <img src={logoImg} alt="Cedra Logo" className="h-7 w-auto object-contain" />
             </div>
-            <div>
-              <h1 className="font-display text-lg font-bold leading-tight tracking-tight text-brand-green">
+            <div className="border-l border-slate-200 pl-3 py-0.5">
+              <h1 className="font-display text-sm font-bold leading-none tracking-tight text-brand-green">
                 D-CURE Plus
               </h1>
-              <span className="text-[10px] font-sans font-semibold tracking-wider text-slate-400 uppercase">
+              <span className="text-[8.5px] font-sans font-semibold tracking-wider text-slate-400 uppercase block mt-1">
                 Admin Panel
               </span>
             </div>
