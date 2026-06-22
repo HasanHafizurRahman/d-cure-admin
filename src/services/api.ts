@@ -209,30 +209,75 @@ export const api = {
   getPackages: async (): Promise<PackageOption[]> => {
     await delay();
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages`);
-      if (response.ok) return await response.json();
-    } catch {
-      // Failover to local storage
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/products`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && Array.isArray(data.items)) {
+          return data.items.map((item: any) => ({
+            id: String(item.id),
+            title: item.name || '',
+            capsules: item.capsule_quantity || '',
+            price: Number(item.selling_price) || 0,
+            originalPrice: Number(item.original_price) || Number(item.selling_price) || 0,
+            savings: Number(item.original_price) > Number(item.selling_price)
+              ? Number(item.original_price) - Number(item.selling_price)
+              : 0,
+            label: item.offer_label || '',
+            isPopular: Boolean(item.is_popular),
+          }));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to get packages from product API:', e);
     }
     return getStorageItem<PackageOption[]>(LOCAL_STORAGE_KEYS.PACKAGES, DEFAULT_PACKAGES);
   },
 
   createPackage: async (pkg: Omit<PackageOption, 'id'>): Promise<PackageOption> => {
     await delay();
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: pkg.title,
+          package_details: pkg.title,
+          capsule_quantity: pkg.capsules,
+          selling_price: pkg.price,
+          original_price: pkg.originalPrice || pkg.price,
+          offer_label: pkg.label || '',
+          is_popular: pkg.isPopular || false,
+          image_path: 'assets/d-cure.png',
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const item = data.item || data.product;
+        if (item) {
+          return {
+            id: String(item.id),
+            title: item.name || '',
+            capsules: item.capsule_quantity || '',
+            price: Number(item.selling_price) || 0,
+            originalPrice: Number(item.original_price) || Number(item.selling_price) || 0,
+            savings: Number(item.original_price) > Number(item.selling_price)
+              ? Number(item.original_price) - Number(item.selling_price)
+              : 0,
+            label: item.offer_label || '',
+            isPopular: Boolean(item.is_popular),
+          };
+        }
+      }
+    } catch (e) {
+      console.error('Failed to create package on product API:', e);
+    }
+
+    // Failover
     const newPkg: PackageOption = {
       ...pkg,
       id: `pkg-${Date.now()}`,
     };
-    try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPkg),
-      });
-      if (response.ok) return await response.json();
-    } catch {
-      // Failover to local storage
-    }
     const packages = getStorageItem<PackageOption[]>(LOCAL_STORAGE_KEYS.PACKAGES, DEFAULT_PACKAGES);
     packages.push(newPkg);
     setStorageItem(LOCAL_STORAGE_KEYS.PACKAGES, packages);
@@ -242,15 +287,43 @@ export const api = {
   updatePackage: async (id: string, updatedPkg: Partial<PackageOption>): Promise<PackageOption> => {
     await delay();
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages/${id}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/products/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedPkg),
+        body: JSON.stringify({
+          name: updatedPkg.title,
+          package_details: updatedPkg.title,
+          capsule_quantity: updatedPkg.capsules,
+          selling_price: updatedPkg.price,
+          original_price: updatedPkg.originalPrice || updatedPkg.price,
+          offer_label: updatedPkg.label || '',
+          is_popular: updatedPkg.isPopular || false,
+          image_path: 'assets/d-cure.png',
+        }),
       });
-      if (response.ok) return await response.json();
-    } catch {
-      // Failover to local storage
+
+      if (response.ok) {
+        const data = await response.json();
+        const item = data.item || data.product;
+        if (item) {
+          return {
+            id: String(item.id),
+            title: item.name || '',
+            capsules: item.capsule_quantity || '',
+            price: Number(item.selling_price) || 0,
+            originalPrice: Number(item.original_price) || Number(item.selling_price) || 0,
+            savings: Number(item.original_price) > Number(item.selling_price)
+              ? Number(item.original_price) - Number(item.selling_price)
+              : 0,
+            label: item.offer_label || '',
+            isPopular: Boolean(item.is_popular),
+          };
+        }
+      }
+    } catch (e) {
+      console.error('Failed to update package on product API:', e);
     }
+
     const packages = getStorageItem<PackageOption[]>(LOCAL_STORAGE_KEYS.PACKAGES, DEFAULT_PACKAGES);
     const index = packages.findIndex((p) => p.id === id);
     if (index === -1) throw new Error('Package not found');
@@ -262,13 +335,17 @@ export const api = {
   deletePackage: async (id: string): Promise<boolean> => {
     await delay();
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/packages/${id}`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/products/${id}`, {
         method: 'DELETE',
       });
-      if (response.ok) return true;
-    } catch {
-      // Failover to local storage
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) return true;
+      }
+    } catch (e) {
+      console.error('Failed to delete package on product API:', e);
     }
+
     const packages = getStorageItem<PackageOption[]>(LOCAL_STORAGE_KEYS.PACKAGES, DEFAULT_PACKAGES);
     const filtered = packages.filter((p) => p.id !== id);
     setStorageItem(LOCAL_STORAGE_KEYS.PACKAGES, filtered);
