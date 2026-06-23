@@ -28,14 +28,14 @@ export default function Districts() {
     loadDistricts();
   }, []);
 
-  const filteredDistricts = districts.filter(d => 
+  const filteredDistricts = districts.filter(d =>
     d.name.toLowerCase().includes(districtQuery.toLowerCase()) ||
     d.name_bn.includes(districtQuery) ||
     d.code.includes(districtQuery)
   );
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6">
       {/* Header details */}
       <div className="text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
@@ -85,7 +85,7 @@ export default function Districts() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-sans text-xs">
               {filteredDistricts.map((district) => (
-                <div 
+                <div
                   key={district.encrypted_id}
                   className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl hover:border-slate-300 hover:bg-white hover:shadow-xs transition-all duration-200 flex flex-col justify-between text-left"
                 >

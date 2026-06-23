@@ -28,14 +28,14 @@ export default function Thanas() {
     loadThanas();
   }, []);
 
-  const filteredThanas = thanas.filter(t => 
+  const filteredThanas = thanas.filter(t =>
     t.name.toLowerCase().includes(thanaQuery.toLowerCase()) ||
     t.name_bn.includes(thanaQuery) ||
     t.code.includes(thanaQuery)
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header details */}
       <div className="text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
@@ -85,7 +85,7 @@ export default function Thanas() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 font-sans text-xs">
               {filteredThanas.map((thana) => (
-                <div 
+                <div
                   key={thana.encrypted_id}
                   className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl hover:border-slate-350 hover:bg-white hover:shadow-xs transition-all duration-200 flex flex-col justify-between text-left shadow-xs"
                 >

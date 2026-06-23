@@ -63,7 +63,7 @@ export default function DeliveryChargeConfig() {
   }
 
   return (
-    <div className="space-y-6 max-w-xl mx-auto">
+    <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header details */}
       <div className="text-left pb-4 border-b border-slate-100">
         <h1 className="font-display text-2xl font-bold text-slate-800">
