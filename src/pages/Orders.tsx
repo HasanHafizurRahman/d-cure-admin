@@ -113,12 +113,12 @@ export default function Orders() {
       {/* Top Controls: Tabs and Search */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200/50 scrollbar-hide max-w-max">
+        <div className="flex overflow-x-auto gap-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/50 scrollbar-hide max-w-max">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all duration-200 cursor-pointer ${
+              className={`px-5 py-2.5 text-base font-semibold rounded-xl transition-all duration-200 cursor-pointer ${
                 activeTab === tab
                   ? 'bg-white text-brand-green shadow-xs'
                   : 'text-slate-500 hover:text-slate-800'
@@ -136,14 +136,14 @@ export default function Orders() {
             <select
               value={selectedPackage}
               onChange={(e) => setSelectedPackage(e.target.value)}
-              className="bg-white border border-slate-200 text-xs font-semibold text-slate-700 px-4 py-2.5 rounded-xl pr-8 focus:outline-none focus:ring-2 focus:ring-brand-green/20"
+              className="bg-white border border-slate-200 text-base font-semibold text-slate-700 px-4 py-2.5 rounded-xl pr-8 focus:outline-none focus:ring-2 focus:ring-brand-green/20"
             >
               <option value="All">সকল প্যাকেজ</option>
               {uniquePackages.map((pkg, idx) => (
                 <option key={idx} value={pkg}>{pkg}</option>
               ))}
             </select>
-            <Filter className="absolute right-2.5 top-3 h-3.5 w-3.5 text-slate-450 pointer-events-none" />
+            <Filter className="absolute right-2.5 top-3.5 h-4 w-4 text-slate-450 pointer-events-none" />
           </div>
 
           {/* Phone/Name query */}
@@ -153,9 +153,9 @@ export default function Orders() {
               placeholder="আইডি, নাম অথবা ফোন..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-white border border-slate-200 text-xs text-slate-800 px-4 py-2.5 pl-9 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green/20 w-full sm:w-60"
+              className="bg-white border border-slate-200 text-base text-slate-800 px-4 py-2.5 pl-9 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green/20 w-full sm:w-60"
             />
-            <Search className="absolute left-3 top-3 h-3.5 w-3.5 text-slate-450" />
+            <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-450" />
           </div>
         </div>
       </div>
@@ -176,18 +176,18 @@ export default function Orders() {
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-100 text-slate-400 font-display font-semibold text-[10px] tracking-wider uppercase bg-slate-50/50">
-                  <th className="py-3 px-6">অর্ডার আইডি</th>
-                  <th className="py-3 px-6">গ্রাহক</th>
-                  <th className="py-3 px-6">মোবাইল</th>
-                  <th className="py-3 px-6">প্যাকেজ</th>
-                  <th className="py-3 px-6 text-right">মূল্য</th>
-                  <th className="py-3 px-6">স্ট্যাটাস</th>
-                  <th className="py-3 px-6 text-center">দ্রুত পরিবর্তন</th>
-                  <th className="py-3 px-6 text-right pr-8">অ্যাকশন</th>
+                <tr className="border-b border-slate-100 text-slate-500 font-display font-semibold text-sm tracking-wider uppercase bg-slate-50/50">
+                  <th className="py-4 px-6">অর্ডার আইডি</th>
+                  <th className="py-4 px-6">গ্রাহক</th>
+                  <th className="py-4 px-6">মোবাইল</th>
+                  <th className="py-4 px-6">প্যাকেজ</th>
+                  <th className="py-4 px-6 text-right">মূল্য</th>
+                  <th className="py-4 px-6">স্ট্যাটাস</th>
+                  <th className="py-4 px-6 text-center">দ্রুত পরিবর্তন</th>
+                  <th className="py-4 px-6 text-right pr-8">অ্যাকশন</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-xs font-sans font-medium text-slate-700 bg-white">
+              <tbody className="divide-y divide-slate-100 text-base font-sans font-medium text-slate-700 bg-white">
                 {filteredOrders.map((order) => {
                   const statusColors = {
                     Processing: 'bg-amber-50 text-amber-600 border border-amber-100',
@@ -198,15 +198,15 @@ export default function Orders() {
 
                   return (
                     <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-4 px-6 font-bold font-display text-slate-800">{order.id}</td>
+                      <td className="py-4 px-6 font-bold font-display text-slate-800">{order.orderNumber || order.id}</td>
                       <td className="py-4 px-6 font-display font-semibold text-slate-800">{order.customerName}</td>
                       <td className="py-4 px-6 font-display text-slate-650">{order.phoneNumber}</td>
-                      <td className="py-4 px-6 font-display text-slate-550 truncate max-w-[150px]" title={order.packageName}>
+                      <td className="py-4 px-6 font-display text-slate-550 truncate max-w-[185px]" title={order.packageName}>
                         {order.packageName}
                       </td>
                       <td className="py-4 px-6 font-bold text-slate-800 font-display text-right">৳{order.totalCost}</td>
                       <td className="py-4 px-6">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold font-display ${statusColors[order.status]}`}>
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold font-display ${statusColors[order.status]}`}>
                           {order.status}
                         </span>
                       </td>
@@ -214,7 +214,7 @@ export default function Orders() {
                         <select
                           value={order.status}
                           onChange={(e) => handleUpdateStatus(order.id, e.target.value as OrderDetails['status'])}
-                          className="bg-slate-50 border border-slate-200 text-[10px] font-semibold text-slate-700 px-2 py-1 rounded-lg focus:outline-none"
+                          className="bg-slate-50 border border-slate-200 text-sm font-semibold text-slate-700 px-3 py-1.5 rounded-lg focus:outline-none cursor-pointer"
                         >
                           <option value="Processing">Processing</option>
                           <option value="Shipped">Shipped</option>
@@ -226,17 +226,17 @@ export default function Orders() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => setSelectedOrder(order)}
-                            className="p-1.5 text-slate-500 hover:bg-slate-50 hover:text-brand-green rounded-lg cursor-pointer transition-colors"
+                            className="p-2 text-slate-500 hover:bg-slate-50 hover:text-brand-green rounded-lg cursor-pointer transition-colors"
                             title="অর্ডার বিবরণ"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleDeleteOrder(order.id)}
-                            className="p-1.5 text-slate-500 hover:bg-slate-50 hover:text-brand-red rounded-lg cursor-pointer transition-colors"
+                            className="p-2 text-slate-500 hover:bg-slate-50 hover:text-brand-red rounded-lg cursor-pointer transition-colors"
                             title="মুছে ফেলুন"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
@@ -273,12 +273,12 @@ export default function Orders() {
                 {/* Header */}
                 <div className="bg-brand-green p-6 text-white flex justify-between items-center">
                   <div className="font-display">
-                    <span className="text-xs font-semibold tracking-wider text-accent-gold uppercase block">Customer Invoice</span>
-                    <h3 className="text-lg font-bold">অর্ডার আইডি: {selectedOrder.id}</h3>
+                    <span className="text-base font-semibold tracking-wider text-accent-gold uppercase block">Customer Invoice</span>
+                    <h3 className="text-2xl font-bold">অর্ডার আইডি: {selectedOrder.orderNumber || selectedOrder.id}</h3>
                   </div>
-                  <div className="text-right font-display text-xs">
+                  <div className="text-right font-display text-base">
                     <p>তারিখ: {selectedOrder.orderDate}</p>
-                    <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full font-bold text-[9px] ${
+                    <span className={`inline-block mt-1 px-3 py-1 rounded-full font-bold text-sm ${
                       selectedOrder.status === 'Processing' ? 'bg-amber-400 text-slate-900' :
                       selectedOrder.status === 'Shipped' ? 'bg-blue-400 text-slate-900' :
                       selectedOrder.status === 'Delivered' ? 'bg-emerald-400 text-slate-900' :
@@ -294,27 +294,36 @@ export default function Orders() {
                   
                   {/* Customer Information */}
                   <div className="space-y-3 font-display">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">ডেলিভারি ঠিকানা</h4>
+                    <h4 className="text-base font-bold text-slate-400 uppercase tracking-wider">ডেলিভারি ঠিকানা</h4>
                     
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2.5 text-xs font-medium text-slate-700">
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2.5 text-base font-medium text-slate-700">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-bold text-slate-900 text-sm">{selectedOrder.customerName}</p>
+                          <p className="font-bold text-slate-900 text-lg">{selectedOrder.customerName}</p>
                           <p className="mt-1 font-sans">{selectedOrder.phoneNumber}</p>
-                          <p className="mt-1 text-slate-600">{selectedOrder.address}</p>
-                          <p className="mt-1.5 text-[10px] text-brand-green bg-brand-green-light/40 px-2 py-0.5 rounded-md inline-block">
+                          {selectedOrder.alternativePhone && (
+                            <p className="mt-1 font-sans text-sm text-slate-550">
+                              বিকল্প ফোন: {selectedOrder.alternativePhone}
+                            </p>
+                          )}
+                          <p className="mt-1 text-slate-650">
+                            {selectedOrder.address}
+                            {(selectedOrder.thanaNameBn || selectedOrder.thanaName) && `, ${selectedOrder.thanaNameBn || selectedOrder.thanaName}`}
+                            {(selectedOrder.districtNameBn || selectedOrder.districtName) && `, ${selectedOrder.districtNameBn || selectedOrder.districtName}`}
+                          </p>
+                          <p className="mt-2 text-sm text-brand-green bg-brand-green-light/40 px-2.5 py-1 rounded-md inline-block">
                             ডেলিভারি এলাকা: {selectedOrder.deliveryArea === 'inside' ? 'ঢাকার ভিতরে' : 'ঢাকার বাইরে'}
                           </p>
                         </div>
                         <button
                           onClick={() => handleCopyText(
-                            `${selectedOrder.customerName}\n${selectedOrder.phoneNumber}\n${selectedOrder.address}`,
+                            `${selectedOrder.customerName}\n${selectedOrder.phoneNumber}${selectedOrder.alternativePhone ? ` (Alt: ${selectedOrder.alternativePhone})` : ''}\n${selectedOrder.address}${(selectedOrder.thanaNameBn || selectedOrder.thanaName) ? `, ${selectedOrder.thanaNameBn || selectedOrder.thanaName}` : ''}${(selectedOrder.districtNameBn || selectedOrder.districtName) ? `, ${selectedOrder.districtNameBn || selectedOrder.districtName}` : ''}`,
                             'address'
                           )}
                           className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
                           title="ঠিকানা কপি করুন"
                         >
-                          {copiedField === 'address' ? <Check className="h-3.5 w-3.5 text-brand-green" /> : <Copy className="h-3.5 w-3.5" />}
+                          {copiedField === 'address' ? <Check className="h-4 w-4 text-brand-green" /> : <Copy className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
@@ -322,9 +331,9 @@ export default function Orders() {
 
                   {/* Order Details Invoice calculate */}
                   <div className="space-y-3 font-display">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">অর্ডার বিবরণ</h4>
+                    <h4 className="text-base font-bold text-slate-400 uppercase tracking-wider">অর্ডার বিবরণ</h4>
                     
-                    <div className="border border-slate-100 rounded-xl divide-y divide-slate-100 text-xs">
+                    <div className="border border-slate-100 rounded-xl divide-y divide-slate-100 text-base">
                       <div className="flex justify-between p-3 text-slate-650">
                         <span>{selectedOrder.packageName}</span>
                         <span className="font-bold text-slate-800">৳{selectedOrder.packagePrice}</span>
@@ -333,17 +342,42 @@ export default function Orders() {
                         <span>ডেলিভারি চার্জ</span>
                         <span className="font-semibold text-slate-800">৳{selectedOrder.deliveryCharge}</span>
                       </div>
-                      <div className="flex justify-between p-3 bg-slate-50/50 font-bold text-sm text-slate-900">
+                      <div className="flex justify-between p-3 bg-slate-50/50 font-bold text-lg text-slate-950">
                         <span>সর্বমোট মূল্য:</span>
                         <span className="text-brand-green">৳{selectedOrder.totalCost}</span>
                       </div>
                     </div>
                   </div>
 
+                  {/* Payment Info & Notes */}
+                  {(selectedOrder.paymentMethod || selectedOrder.notes) && (
+                    <div className="space-y-3 font-display">
+                      <h4 className="text-base font-bold text-slate-400 uppercase tracking-wider">পেমেন্ট ও নোট</h4>
+                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2.5 text-base text-slate-700">
+                        {selectedOrder.paymentMethod && (
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">পেমেন্ট পদ্ধতি:</span>
+                            <span className="font-bold text-slate-900 uppercase">
+                              {selectedOrder.paymentMethod} ({selectedOrder.paymentStatus === 'paid' ? 'Paid' : 'Unpaid'})
+                            </span>
+                          </div>
+                        )}
+                        {selectedOrder.notes && (
+                          <div className="pt-2 border-t border-slate-200/50">
+                            <span className="text-slate-500 block mb-1">গ্রাহকের নোট:</span>
+                            <p className="text-slate-800 bg-white p-2.5 rounded-lg border border-slate-200/40 text-sm font-sans italic">
+                              "{selectedOrder.notes}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Missing Delivery validation prompt (Warning banner if missing details) */}
                   {selectedOrder.status === 'Processing' && (!selectedOrder.address.trim() || !selectedOrder.phoneNumber.trim()) && (
-                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-xs font-medium flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 shrink-0" />
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-base font-medium flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 shrink-0" />
                       <span>সতর্কতা: ডেলিভারি বা কন্টাক্ট ডিটেইলস অপূর্ণ রয়েছে!</span>
                     </div>
                   )}
@@ -354,24 +388,24 @@ export default function Orders() {
                       {selectedOrder.status !== 'Shipped' && (
                         <button
                           onClick={() => handleUpdateStatus(selectedOrder.id, 'Shipped')}
-                          className="flex items-center justify-center bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 py-2.5 rounded-xl font-display font-semibold text-[10px] cursor-pointer gap-1"
+                          className="flex items-center justify-center bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 py-3 rounded-xl font-display font-semibold text-sm cursor-pointer gap-1.5"
                         >
-                          <Truck className="h-3.5 w-3.5" />
+                          <Truck className="h-4 w-4" />
                           শিপড
                         </button>
                       )}
                       {selectedOrder.status !== 'Delivered' && (
                         <button
                           onClick={() => handleUpdateStatus(selectedOrder.id, 'Delivered')}
-                          className="flex items-center justify-center bg-brand-green-light border border-brand-green/20 hover:bg-brand-green-light/80 text-brand-green py-2.5 rounded-xl font-display font-semibold text-[10px] cursor-pointer gap-1"
+                          className="flex items-center justify-center bg-brand-green-light border border-brand-green/20 hover:bg-brand-green-light/80 text-brand-green py-3 rounded-xl font-display font-semibold text-sm cursor-pointer gap-1.5"
                         >
-                          <Check className="h-3.5 w-3.5" />
+                          <Check className="h-4 w-4" />
                           ডেলিভার্ড
                         </button>
                       )}
                       <button
                         onClick={() => setSelectedOrder(null)}
-                        className="flex items-center justify-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 py-2.5 rounded-xl font-display font-semibold text-[10px] cursor-pointer"
+                        className="flex items-center justify-center bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 py-3 rounded-xl font-display font-semibold text-sm cursor-pointer"
                       >
                         বন্ধ করুন
                       </button>

@@ -192,27 +192,51 @@ const formatOrderDate = (dateStr?: string): string => {
 const mapBackendOrder = (item: any): OrderDetails => {
   if (!item) return {} as OrderDetails;
   
-  let packageName = item.package_name || item.packageName || '';
-  if (!packageName && item.product) {
-    packageName = item.product.name || '';
+  const quantity = Number(item.quantity || 1);
+  const unitPrice = Number(item.unit_price || 0);
+  const subtotal = item.total_amount ? Number(item.total_amount) : Number(item.package_price || item.packagePrice || item.selling_price || 0);
+  
+  let productName = item.product?.name || item.package_name || item.packageName || '';
+  let packageName = productName;
+  if (productName && quantity > 1) {
+    packageName = `${productName} (Qty: ${quantity})`;
   }
   
-  const packagePrice = Number(item.package_price || item.packagePrice || item.selling_price || 0);
-  const deliveryCharge = Number(item.delivery_charge || item.deliveryCharge || 0);
-  const totalCost = Number(item.total_cost || item.totalCost || (packagePrice + deliveryCharge));
+  const isInsideDhaka = item.district?.code === '3001' || item.district?.name?.toLowerCase() === 'dhaka' || item.delivery_area === 'inside' || item.deliveryArea === 'inside';
+  const deliveryArea = isInsideDhaka ? 'inside' : 'outside';
+  const deliveryCharge = Number(item.delivery_charge || item.deliveryCharge || (isInsideDhaka ? 60 : 130));
+  const totalCost = item.total_amount ? (subtotal + deliveryCharge) : Number(item.total_cost || item.totalCost || (subtotal + deliveryCharge));
+
+  const rawStatus = (item.status || '').toLowerCase();
+  let status: OrderDetails['status'] = 'Processing';
+  if (rawStatus === 'shipped') status = 'Shipped';
+  else if (rawStatus === 'delivered') status = 'Delivered';
+  else if (rawStatus === 'cancelled') status = 'Cancelled';
+  else status = 'Processing'; // handles 'pending', 'processing', etc.
 
   return {
     id: String(item.id || item.order_id || ''),
+    orderNumber: item.order_number || '',
     packageName: packageName,
-    packagePrice: packagePrice,
+    packagePrice: subtotal,
     customerName: item.customer_name || item.customerName || '',
-    phoneNumber: item.phone_number || item.phoneNumber || '',
-    address: item.address || '',
-    deliveryArea: item.delivery_area === 'outside' || item.deliveryArea === 'outside' ? 'outside' : 'inside',
-    deliveryCharge: deliveryCharge,
-    totalCost: totalCost,
+    phoneNumber: item.customer_phone || item.phone_number || item.phoneNumber || '',
+    alternativePhone: item.alternative_phone || null,
+    address: item.shipping_address || item.address || '',
+    districtName: item.district?.name || '',
+    districtNameBn: item.district?.name_bn || '',
+    thanaName: item.thana?.name || '',
+    thanaNameBn: item.thana?.name_bn || '',
+    deliveryArea,
+    deliveryCharge,
+    totalCost,
     orderDate: formatOrderDate(item.created_at || item.order_date || item.orderDate),
-    status: item.status || 'Processing',
+    status,
+    quantity,
+    unitPrice,
+    paymentMethod: item.payment_method || 'COD',
+    paymentStatus: item.payment_status || 'unpaid',
+    notes: item.notes || null,
   };
 };
 
@@ -400,7 +424,15 @@ export const api = {
     try {
       let url = '/api/orders';
       const params = new URLSearchParams();
-      if (filters?.status) params.append('status', filters.status);
+      if (filters?.status && filters.status !== 'All') {
+        const statusMap: Record<string, string> = {
+          Processing: 'pending',
+          Shipped: 'shipped',
+          Delivered: 'delivered',
+          Cancelled: 'cancelled'
+        };
+        params.append('status', statusMap[filters.status] || filters.status.toLowerCase());
+      }
       if (filters?.search) params.append('search', filters.search);
       if (params.toString()) url += `?${params.toString()}`;
 
@@ -475,10 +507,11 @@ export const api = {
   ): Promise<OrderDetails> => {
     await delay();
     try {
+      const backendStatus = status === 'Processing' ? 'pending' : status.toLowerCase();
       const response = await fetchWithAuth(`${API_BASE_URL}/api/orders/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status: backendStatus }),
       });
       if (response.ok) {
         const data = await response.json();

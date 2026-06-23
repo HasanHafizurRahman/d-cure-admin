@@ -12,19 +12,29 @@ export interface PackageOption {
   isPopular?: boolean;    // Highlight flag
 }
 
-// Order details submitted from the landing page CheckoutForm
 export interface OrderDetails {
-  id: string;             // Generated ID (e.g. DC-458129)
+  id: string;             // Generated ID (e.g. 20 or DC-458129)
+  orderNumber?: string;   // order_number from backend (e.g. OR-20260622-0020)
   packageName: string;
   packagePrice: number;
   customerName: string;
   phoneNumber: string;
+  alternativePhone?: string | null;
   address: string;
+  districtName?: string;
+  districtNameBn?: string;
+  thanaName?: string;
+  thanaNameBn?: string;
   deliveryArea: 'inside' | 'outside';
   deliveryCharge: number; // 60 or 130
   totalCost: number;      // packagePrice + deliveryCharge
   orderDate: string;      // e.g. "21 June 2026"
   status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  quantity?: number;
+  unitPrice?: number;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  notes?: string | null;
 }
 
 // Delivery Configurations

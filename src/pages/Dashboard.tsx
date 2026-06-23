@@ -325,7 +325,7 @@ export default function Dashboard() {
 
                   return (
                     <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-4 pl-2 font-bold font-display text-slate-800">{order.id}</td>
+                      <td className="py-4 pl-2 font-bold font-display text-slate-800">{order.orderNumber || order.id}</td>
                       <td className="py-4 font-display font-semibold text-slate-800">{order.customerName}</td>
                       <td className="py-4 font-display text-slate-600 truncate max-w-[180px]">{order.packageName}</td>
                       <td className="py-4">
