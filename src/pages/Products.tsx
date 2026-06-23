@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
-import { 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  ArrowRight, 
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  ArrowRight,
   X
 } from 'lucide-react';
 import { api } from '../services/api';
@@ -28,21 +28,21 @@ const BottleSVG = ({ className = "h-28" }: { className?: string }) => (
     <line x1="50" y1="10" x2="50" y2="25" stroke="#9a7b1c" strokeWidth="1.5" />
     <line x1="56" y1="10" x2="56" y2="25" stroke="#9a7b1c" strokeWidth="1.5" />
     <line x1="61" y1="10" x2="61" y2="25" stroke="#9a7b1c" strokeWidth="1.5" />
-    
+
     {/* Neck */}
     <rect x="40" y="25" width="20" height="10" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
-    
+
     {/* Body */}
     <rect x="20" y="35" width="60" height="100" rx="10" fill="#004d2e" stroke="#003520" strokeWidth="2.5" />
-    
+
     {/* Label BG */}
     <rect x="26" y="55" width="48" height="60" rx="3" fill="#ffffff" />
-    
+
     {/* Leaf details */}
     <path d="M50 63C45 68 42 73 42 78C42 82 45 85 50 85C55 85 58 82 58 78C58 73 55 68 50 63Z" fill="#004d2e" />
     <text x="50" y="96" fill="#004d2e" fontSize="7" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">D-CURE</text>
     <text x="50" y="103" fill="#d4af37" fontSize="5" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">PLUS</text>
-    
+
     {/* Reflection Highlight */}
     <rect x="23" y="38" width="5" height="94" rx="2.5" fill="#ffffff" fillOpacity="0.12" />
   </svg>
@@ -230,11 +230,10 @@ export default function Products() {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className={`relative bg-white border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 shadow-xs hover:shadow-lg ${
-                pkg.isPopular 
-                  ? 'border-accent-gold ring-2 ring-accent-gold/20' 
+              className={`relative bg-white border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 shadow-xs hover:shadow-lg ${pkg.isPopular
+                  ? 'border-accent-gold ring-2 ring-accent-gold/20'
                   : 'border-slate-200'
-              }`}
+                }`}
             >
               {/* Popular Flag corner ribbon */}
               {pkg.isPopular && (
@@ -247,7 +246,7 @@ export default function Products() {
 
               {/* Package card layout items */}
               <div className="space-y-4 text-center">
-                
+
                 {/* Visual SVG representation */}
                 <BottlesPreview id={pkg.id} />
 
@@ -320,8 +319,8 @@ export default function Products() {
                   <h3 className="font-display font-bold text-slate-800">
                     {editingPkg ? 'Edit Package' : 'Add New Package'}
                   </h3>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setIsModalOpen(false)}
                     className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-50 cursor-pointer"
                   >
@@ -380,7 +379,7 @@ export default function Products() {
 
                   {/* Badge Label Offer text */}
                   <div className="space-y-1">
-                    <label className="font-display font-semibold text-slate-700">অফার লেবেল</label>
+                    <label className="font-display font-semibold text-slate-700">Offer Label</label>
                     <input
                       type="text"
                       placeholder="যেমন: বিশেষ অফার, সেরা অফার (ফুল কোর্স)"
@@ -436,11 +435,10 @@ export default function Products() {
                 {/* Client Side Pricing Card Representation */}
                 <div className="w-full max-w-xs">
                   <div
-                    className={`relative bg-white border rounded-2xl p-6 flex flex-col justify-between text-center select-none shadow-md ${
-                      formIsPopular 
-                        ? 'border-accent-gold ring-2 ring-accent-gold/20' 
+                    className={`relative bg-white border rounded-2xl p-6 flex flex-col justify-between text-center select-none shadow-md ${formIsPopular
+                        ? 'border-accent-gold ring-2 ring-accent-gold/20'
                         : 'border-slate-200'
-                    }`}
+                      }`}
                   >
                     {/* Ribbon */}
                     {formIsPopular && (
@@ -486,11 +484,10 @@ export default function Products() {
 
                     <div className="mt-5 pt-3 border-t border-slate-100">
                       <div
-                        className={`w-full flex items-center justify-center py-2.5 rounded-md font-display font-bold text-[11px] select-none ${
-                          formIsPopular 
-                            ? 'bg-slate-800 text-white shadow-xs' 
+                        className={`w-full flex items-center justify-center py-2.5 rounded-md font-display font-bold text-[11px] select-none ${formIsPopular
+                            ? 'bg-slate-800 text-white shadow-xs'
                             : 'bg-white border border-slate-800 text-slate-800'
-                        }`}
+                          }`}
                       >
                         Choose Package
                         <ArrowRight size={12} className="ml-1" />
