@@ -38,8 +38,12 @@ export default function Header({ onMenuToggle }: HeaderProps) {
         return 'Order Management';
       case '/products':
         return 'Package Pricing Manager';
-      case '/settings':
-        return 'Settings & Configuration';
+      case '/delivery-charge':
+        return 'Delivery Charge Configuration';
+      case '/districts':
+        return 'Districts Directory';
+      case '/thanas':
+        return 'Thanas Directory';
       default:
         return 'Admin Panel';
     }

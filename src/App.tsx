@@ -3,7 +3,9 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Products from './pages/Products';
-import Settings from './pages/Settings';
+import DeliveryChargeConfig from './pages/DeliveryChargeConfig';
+import Districts from './pages/Districts';
+import Thanas from './pages/Thanas';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -36,7 +38,9 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="orders" element={<Orders />} />
               <Route path="products" element={<Products />} />
-              <Route path="settings" element={<Settings />} />
+              <Route path="delivery-charge" element={<DeliveryChargeConfig />} />
+              <Route path="districts" element={<Districts />} />
+              <Route path="thanas" element={<Thanas />} />
             </Route>
           </Route>
         </Routes>

@@ -548,11 +548,13 @@ export const api = {
   // --- DISTRICTS ENDPOINTS ---
   getDistricts: async (): Promise<District[]> => {
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/public/districts`);
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/districts`);
       if (response.ok) {
         const data = await response.json();
-        if (data.success && Array.isArray(data.items)) {
+        if (data && Array.isArray(data.items)) {
           return data.items;
+        } else if (Array.isArray(data)) {
+          return data;
         }
       }
     } catch (e) {
@@ -562,17 +564,23 @@ export const api = {
   },
 
   // --- THANAS ENDPOINTS ---
-  getThanas: async (districtCode: string): Promise<Thana[]> => {
+  getThanas: async (districtCode?: string): Promise<Thana[]> => {
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/public/thanas/district/${districtCode}`);
+      let url = '/api/thanas';
+      if (districtCode) {
+        url += `?district_code=${districtCode}`;
+      }
+      const response = await fetchWithAuth(`${API_BASE_URL}${url}`);
       if (response.ok) {
         const data = await response.json();
-        if (data.success && Array.isArray(data.items)) {
+        if (data && Array.isArray(data.items)) {
           return data.items;
+        } else if (Array.isArray(data)) {
+          return data;
         }
       }
     } catch (e) {
-      console.error(`Failed to get thanas for district ${districtCode}:`, e);
+      console.error(`Failed to get thanas:`, e);
     }
     return [];
   },

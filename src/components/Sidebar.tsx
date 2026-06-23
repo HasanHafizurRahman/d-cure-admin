@@ -3,9 +3,11 @@ import {
   LayoutDashboard, 
   ShoppingCart, 
   Tag, 
-  Settings as SettingsIcon, 
   X, 
-  LogOut
+  LogOut,
+  Truck,
+  Globe,
+  Map
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import logoImg from '../assets/cedra.png';
@@ -22,7 +24,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: 'Dashboard', path: '/', icon: LayoutDashboard, slug: 'dashboard' },
     { name: 'Orders', path: '/orders', icon: ShoppingCart, slug: 'orders' },
     { name: 'Products / Pricing', path: '/products', icon: Tag, slug: 'products' },
-    { name: 'Settings', path: '/settings', icon: SettingsIcon, slug: 'settings' },
+    { name: 'Delivery Charge Config', path: '/delivery-charge', icon: Truck, slug: 'delivery-charge' },
+    { name: 'Districts', path: '/districts', icon: Globe, slug: 'districts' },
+    { name: 'Thanas', path: '/thanas', icon: Map, slug: 'thanas' },
   ];
 
   // Always display all menu items so that products, orders, etc. are visible
