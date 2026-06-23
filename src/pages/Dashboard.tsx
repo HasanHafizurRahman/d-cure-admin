@@ -62,7 +62,7 @@ export default function Dashboard() {
       // Find orders matching this day (e.g. "21 June 2026" or "20 June 2026")
       const dayOrders = orders.filter(o => {
         // Compare "20 June" with "20 June 2026"
-        return o.orderDate.includes(dateStr) && o.status !== 'Cancelled';
+        return o.orderDate && o.orderDate.includes(dateStr) && o.status !== 'Cancelled';
       });
 
       const revenue = dayOrders.reduce((sum, o) => sum + o.totalCost, 0);

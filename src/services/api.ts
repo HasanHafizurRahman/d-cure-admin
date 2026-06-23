@@ -176,6 +176,47 @@ const setStorageItem = <T>(key: string, value: T): void => {
 // Simulated latency helper
 const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const formatOrderDate = (dateStr?: string): string => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ['June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May'];
+    // Let's use standard full month names in English to match the frontend expectations
+    const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return `${d.getDate()} ${allMonths[d.getMonth()]} ${d.getFullYear()}`;
+  } catch {
+    return dateStr;
+  }
+};
+
+const mapBackendOrder = (item: any): OrderDetails => {
+  if (!item) return {} as OrderDetails;
+  
+  let packageName = item.package_name || item.packageName || '';
+  if (!packageName && item.product) {
+    packageName = item.product.name || '';
+  }
+  
+  const packagePrice = Number(item.package_price || item.packagePrice || item.selling_price || 0);
+  const deliveryCharge = Number(item.delivery_charge || item.deliveryCharge || 0);
+  const totalCost = Number(item.total_cost || item.totalCost || (packagePrice + deliveryCharge));
+
+  return {
+    id: String(item.id || item.order_id || ''),
+    packageName: packageName,
+    packagePrice: packagePrice,
+    customerName: item.customer_name || item.customerName || '',
+    phoneNumber: item.phone_number || item.phoneNumber || '',
+    address: item.address || '',
+    deliveryArea: item.delivery_area === 'outside' || item.deliveryArea === 'outside' ? 'outside' : 'inside',
+    deliveryCharge: deliveryCharge,
+    totalCost: totalCost,
+    orderDate: formatOrderDate(item.created_at || item.order_date || item.orderDate),
+    status: item.status || 'Processing',
+  };
+};
+
 export const api = {
   // --- AUTH ENDPOINTS ---
   login: async (email: string, password: string): Promise<LoginResponse> => {
@@ -367,13 +408,15 @@ export const api = {
       const response = await fetchWithAuth(`${API_BASE_URL}${url}`);
       if (response.ok) {
         const data = await response.json();
+        let list: any[] = [];
         if (data && Array.isArray(data.items)) {
-          return data.items;
+          list = data.items;
         } else if (data && Array.isArray(data.orders)) {
-          return data.orders;
+          list = data.orders;
         } else if (Array.isArray(data)) {
-          return data;
+          list = data;
         }
+        return list.map(mapBackendOrder);
       }
     } catch {
       // Failover to local storage
@@ -413,9 +456,10 @@ export const api = {
       });
       if (response.ok) {
         const data = await response.json();
-        if (data && data.item) return data.item;
-        if (data && data.order) return data.order;
-        return data;
+        let orderObj = data;
+        if (data && data.item) orderObj = data.item;
+        else if (data && data.order) orderObj = data.order;
+        return mapBackendOrder(orderObj);
       }
     } catch {
       // Failover to local storage
@@ -439,9 +483,10 @@ export const api = {
       });
       if (response.ok) {
         const data = await response.json();
-        if (data && data.item) return data.item;
-        if (data && data.order) return data.order;
-        return data;
+        let orderObj = data;
+        if (data && data.item) orderObj = data.item;
+        else if (data && data.order) orderObj = data.order;
+        return mapBackendOrder(orderObj);
       }
     } catch {
       // Failover to local storage
