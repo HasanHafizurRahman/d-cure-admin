@@ -114,7 +114,7 @@ export default function Products() {
       const data = await api.getPackages();
       setPackages(data);
     } catch {
-      toast.error('প্যাকেজ লোড করতে ব্যর্থ হয়েছে');
+      toast.error('Failed to load packages');
     } finally {
       setLoading(false);
     }
@@ -139,8 +139,8 @@ export default function Products() {
   const openEditModal = (pkg: PackageOption) => {
     setEditingPkg(pkg);
     setFormId(pkg.id);
-    setFormTitle(pkg.title);
-    setFormCapsules(pkg.capsules);
+    setFormTitle(pkg.title ? String(pkg.title) : '');
+    setFormCapsules(pkg.capsules ? String(pkg.capsules) : '');
     setFormPrice(pkg.price);
     setFormOriginalPrice(pkg.originalPrice || pkg.price);
     setFormLabel(pkg.label || '');
@@ -149,21 +149,21 @@ export default function Products() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('আপনি কি এই প্যাকেজটি মুছে ফেলতে চান? এটি ক্লায়েন্ট সাইড চেকআউটকেও প্রভাবিত করতে পারে।')) return;
+    if (!window.confirm('Are you sure you want to delete this package? This may affect the customer checkout page.')) return;
     try {
       await api.deletePackage(id);
-      toast.success('প্যাকেজটি সফলভাবে মুছে ফেলা হয়েছে');
+      toast.success('Package deleted successfully');
       setPackages(prev => prev.filter(p => p.id !== id));
     } catch {
-      toast.error('প্যাকেজটি মুছতে সমস্যা হয়েছে');
+      toast.error('Failed to delete package');
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
-    if (!formTitle.trim()) return toast.error('প্যাকেজ টাইটেল লিখুন');
-    if (!formCapsules.trim()) return toast.error('ক্যাপসুল সংখ্যা উল্লেখ করুন');
-    if (formPrice <= 0) return toast.error('সঠিক মূল্য দিন');
+    if (!String(formTitle || '').trim()) return toast.error('Please enter the package title');
+    if (!String(formCapsules || '').trim()) return toast.error('Please specify capsule quantity');
+    if (formPrice <= 0) return toast.error('Please enter a valid price');
 
     const pkgData = {
       title: formTitle,
@@ -179,17 +179,17 @@ export default function Products() {
       if (editingPkg) {
         // Update
         const updated = await api.updatePackage(formId, pkgData);
-        toast.success('প্যাকেজ সফলভাবে আপডেট করা হয়েছে');
+        toast.success('Package updated successfully');
         setPackages(prev => prev.map(p => p.id === formId ? updated : p));
       } else {
         // Create
         const created = await api.createPackage(pkgData);
-        toast.success('নতুন প্যাকেজ সফলভাবে যোগ করা হয়েছে');
+        toast.success('New package added successfully');
         setPackages(prev => [...prev, created]);
       }
       setIsModalOpen(false);
     } catch {
-      toast.error('প্যাকেজটি সংরক্ষণ করতে সমস্যা হয়েছে');
+      toast.error('Failed to save package');
     }
   };
 
@@ -210,7 +210,7 @@ export default function Products() {
           className="flex items-center gap-2 bg-brand-green hover:bg-[#125136] text-white px-4 py-2.5 rounded-xl font-display font-semibold text-xs transition-colors shadow-md cursor-pointer"
         >
           <Plus className="h-4 w-4" />
-          নতুন প্যাকেজ যোগ করুন
+          Add New Package
         </button>
       </div>
 
@@ -223,7 +223,7 @@ export default function Products() {
         </div>
       ) : packages.length === 0 ? (
         <div className="glass-panel p-16 text-center rounded-2xl border border-slate-150">
-          <p className="text-slate-400 font-semibold text-sm">কোনো প্যাকেজ পাওয়া যায়নি। নতুন একটি তৈরি করুন।</p>
+          <p className="text-slate-400 font-semibold text-sm">No packages found. Create a new one.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
@@ -274,7 +274,7 @@ export default function Products() {
                     <div className="text-xs text-slate-500 font-sans flex items-center justify-center gap-1.5">
                       <span className="line-through text-brand-red font-display">৳{pkg.originalPrice}</span>
                       <span className="bg-brand-red/10 text-brand-red px-1.5 py-0.5 rounded-md font-semibold text-[10px]">
-                        ৳{pkg.savings} সাশ্রয়!
+                        ৳{pkg.savings} Save!
                       </span>
                     </div>
                   ) : null}
@@ -288,14 +288,14 @@ export default function Products() {
                   className="flex items-center gap-1 text-slate-500 hover:text-brand-green bg-slate-50 hover:bg-brand-green-light/45 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
-                  সম্পাদনা
+                  Edit
                 </button>
                 <button
                   onClick={() => handleDelete(pkg.id)}
                   className="flex items-center gap-1 text-slate-500 hover:text-brand-red bg-slate-50 hover:bg-brand-red/15 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  মুছুন
+                  Delete
                 </button>
               </div>
             </div>
@@ -318,7 +318,7 @@ export default function Products() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4 text-left border-r border-slate-100">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                   <h3 className="font-display font-bold text-slate-800">
-                    {editingPkg ? 'প্যাকেজ সম্পাদনা' : 'নতুন প্যাকেজ যোগ করুন'}
+                    {editingPkg ? 'Edit Package' : 'Add New Package'}
                   </h3>
                   <button 
                     type="button" 
@@ -332,10 +332,10 @@ export default function Products() {
                 <div className="space-y-3.5 font-sans text-xs">
                   {/* Title Input */}
                   <div className="space-y-1">
-                    <label className="font-display font-semibold text-slate-700">প্যাকেজ টাইটেল *</label>
+                    <label className="font-display font-semibold text-slate-700">Package Title *</label>
                     <input
                       type="text"
-                      placeholder="যেমন: ১টি বক্স (১২০ ক্যাপসুল)"
+                      placeholder="e.g., 1 Box (120 Capsules)"
                       value={formTitle}
                       onChange={(e) => setFormTitle(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-green/20"
@@ -344,10 +344,10 @@ export default function Products() {
 
                   {/* Capsules Quantity Input */}
                   <div className="space-y-1">
-                    <label className="font-display font-semibold text-slate-700">ক্যাপসুল পরিমাণ *</label>
+                    <label className="font-display font-semibold text-slate-700">Capsule Quantity *</label>
                     <input
                       type="text"
-                      placeholder="যেমন: ১২০টি ক্যাপসুল"
+                      placeholder="e.g., 120 Capsules"
                       value={formCapsules}
                       onChange={(e) => setFormCapsules(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-green/20"
@@ -357,7 +357,7 @@ export default function Products() {
                   {/* Prices & Original Price row */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="font-display font-semibold text-slate-700">বিক্রয় মূল্য (৳) *</label>
+                      <label className="font-display font-semibold text-slate-700">Selling Price (৳) *</label>
                       <input
                         type="number"
                         placeholder="1200"
@@ -367,7 +367,7 @@ export default function Products() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="font-display font-semibold text-slate-700">আসল মূল্য (৳)</label>
+                      <label className="font-display font-semibold text-slate-700">Original Price (৳)</label>
                       <input
                         type="number"
                         placeholder="1200"
@@ -414,13 +414,14 @@ export default function Products() {
                     onClick={() => setIsModalOpen(false)}
                     className="px-4 py-2 bg-slate-50 border border-slate-200 text-slate-650 hover:bg-slate-100 rounded-xl font-display font-semibold text-xs cursor-pointer transition-colors"
                   >
-                    বাতিল
+                    Cancel
                   </button>
                   <button
                     type="submit"
+                    onClick={handleSubmit}
                     className="px-5 py-2 bg-brand-green hover:bg-[#125136] text-white rounded-xl font-display font-semibold text-xs cursor-pointer transition-colors shadow-sm"
                   >
-                    সংরক্ষণ করুন
+                    Save
                   </button>
                 </div>
               </form>
@@ -429,7 +430,7 @@ export default function Products() {
               <div className="bg-slate-50 p-6 flex flex-col justify-center items-center text-center">
                 <div className="mb-4 text-left w-full">
                   <h4 className="font-display font-bold text-xs text-slate-400 uppercase tracking-wider">Live Site Preview</h4>
-                  <p className="text-[10px] text-slate-500 font-sans">অ্যাডমিন টাইপ করলে রিয়েল-টাইমে পরিবর্তন দেখুন</p>
+                  <p className="text-[10px] text-slate-500 font-sans">See changes in real-time as you type</p>
                 </div>
 
                 {/* Client Side Pricing Card Representation */}
@@ -460,10 +461,10 @@ export default function Products() {
                           {formLabel || 'প্যাকেজ অফার'}
                         </span>
                         <h3 className="text-sm sm:text-base font-display font-bold text-slate-800 truncate">
-                          {formTitle || 'প্যাকেজ নাম'}
+                          {formTitle || 'Package Title'}
                         </h3>
                         <p className="text-[9px] font-sans text-slate-400">
-                          {formCapsules || '১২০টি ক্যাপসুল'}
+                          {formCapsules || '120 Capsules'}
                         </p>
                       </div>
 
@@ -476,7 +477,7 @@ export default function Products() {
                           <div className="text-[10px] text-slate-500 font-sans flex items-center justify-center gap-1.5">
                             <span className="line-through text-brand-red font-display">৳{formOriginalPrice}</span>
                             <span className="bg-brand-red/10 text-brand-red px-1 py-0.5 rounded-md font-semibold">
-                              ৳{formSavings} সাশ্রয়!
+                              ৳{formSavings} Save!
                             </span>
                           </div>
                         ) : null}
@@ -491,7 +492,7 @@ export default function Products() {
                             : 'bg-white border border-slate-800 text-slate-800'
                         }`}
                       >
-                        প্যাকেজটি বেছে নিন
+                        Choose Package
                         <ArrowRight size={12} className="ml-1" />
                       </div>
                     </div>
