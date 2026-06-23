@@ -18,7 +18,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const { user, menus, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const allMenuItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard, slug: 'dashboard' },

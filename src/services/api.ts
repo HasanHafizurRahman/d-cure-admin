@@ -181,7 +181,6 @@ const formatOrderDate = (dateStr?: string): string => {
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    const months = ['June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May'];
     // Let's use standard full month names in English to match the frontend expectations
     const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     return `${d.getDate()} ${allMonths[d.getMonth()]} ${d.getFullYear()}`;
