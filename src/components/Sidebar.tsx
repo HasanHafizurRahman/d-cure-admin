@@ -25,12 +25,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: 'Settings', path: '/settings', icon: SettingsIcon, slug: 'settings' },
   ];
 
-  // Filter menu items if API menus exist and are active
-  const menuItems = menus && menus.length > 0
-    ? allMenuItems.filter(item => 
-        menus.some(m => m.slug?.toLowerCase() === item.slug && m.is_active)
-      )
-    : allMenuItems;
+  // Always display all menu items so that products, orders, etc. are visible
+  const menuItems = allMenuItems;
 
 
   return (

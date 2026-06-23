@@ -365,7 +365,16 @@ export const api = {
       if (params.toString()) url += `?${params.toString()}`;
 
       const response = await fetchWithAuth(`${API_BASE_URL}${url}`);
-      if (response.ok) return await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        if (data && Array.isArray(data.items)) {
+          return data.items;
+        } else if (data && Array.isArray(data.orders)) {
+          return data.orders;
+        } else if (Array.isArray(data)) {
+          return data;
+        }
+      }
     } catch {
       // Failover to local storage
     }
@@ -402,7 +411,12 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newOrder),
       });
-      if (response.ok) return await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.item) return data.item;
+        if (data && data.order) return data.order;
+        return data;
+      }
     } catch {
       // Failover to local storage
     }
@@ -423,7 +437,12 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
-      if (response.ok) return await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.item) return data.item;
+        if (data && data.order) return data.order;
+        return data;
+      }
     } catch {
       // Failover to local storage
     }
