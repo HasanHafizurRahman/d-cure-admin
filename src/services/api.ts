@@ -1,8 +1,10 @@
-import type { PackageOption, OrderDetails, DeliverySettings, LoginResponse } from '../types';
+import type { PackageOption, OrderDetails, DeliverySettings, LoginResponse, District, Thana } from '../types';
+
+
 
 // API Configuration
-const API_BASE_URL = import.meta.env.DEV 
-  ? '' 
+const API_BASE_URL = import.meta.env.DEV
+  ? ''
   : (import.meta.env.VITE_API_BASE_URL || 'http://118.179.144.13:8005');
 
 const getAuthHeaders = (): HeadersInit => {
@@ -28,9 +30,9 @@ const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Re
     localStorage.removeItem('dcure_admin_token');
     localStorage.removeItem('dcure_admin_user');
     localStorage.removeItem('dcure_admin_menus');
-    
+
     window.dispatchEvent(new Event('dcure_unauthorized'));
-    
+
     if (!window.location.pathname.includes('/login')) {
       window.location.href = '/login';
     }
@@ -209,7 +211,7 @@ export const api = {
   getPackages: async (): Promise<PackageOption[]> => {
     await delay();
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/products`);
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/public/products`);
       if (response.ok) {
         const data = await response.json();
         if (data.success && Array.isArray(data.items)) {
@@ -478,4 +480,37 @@ export const api = {
     setStorageItem(LOCAL_STORAGE_KEYS.SETTINGS, updated);
     return updated;
   },
+
+  // --- DISTRICTS ENDPOINTS ---
+  getDistricts: async (): Promise<District[]> => {
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/public/districts`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && Array.isArray(data.items)) {
+          return data.items;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to get districts:', e);
+    }
+    return [];
+  },
+
+  // --- THANAS ENDPOINTS ---
+  getThanas: async (districtCode: string): Promise<Thana[]> => {
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/public/thanas/district/${districtCode}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && Array.isArray(data.items)) {
+          return data.items;
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to get thanas for district ${districtCode}:`, e);
+    }
+    return [];
+  },
 };
+

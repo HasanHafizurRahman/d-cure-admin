@@ -64,3 +64,18 @@ export interface LoginResponse {
   menus: MenuItem[];
 }
 
+export interface District {
+  name: string;
+  name_bn: string;
+  code: string;
+  encrypted_id: string;
+}
+
+export interface Thana {
+  district_id: number;
+  name: string;
+  name_bn: string;
+  code: string;
+  encrypted_id: string;
+}
+
